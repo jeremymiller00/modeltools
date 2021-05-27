@@ -1,0 +1,7 @@
+build/*
+dist/*
+modeltools.egg-info/*
+src/modeltools.egg-info/*
+src/modeltools/__pycache__/*
+src/tests/__pycache__/*
+.idea/*
