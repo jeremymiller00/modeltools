@@ -11,6 +11,7 @@ boto3 = "*"
 keras = "*"
 scikit-learn = "*"
 statsmodels = "*"
+pyspark = "*"
 
 [dev-packages]
 
