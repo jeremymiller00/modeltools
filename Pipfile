@@ -12,6 +12,7 @@ keras = "*"
 scikit-learn = "*"
 statsmodels = "*"
 pyspark = "*"
+matplotlib = "*"
 
 [dev-packages]
 
