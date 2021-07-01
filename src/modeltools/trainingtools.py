@@ -83,10 +83,12 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
     def summary(self):
         print(self.results_.summary())
 
-
-def looEval(features: list, label: str, data: pd.DataFrame, model=LogisticRegression(C=1000000)):
+def values_from_dataframe(features: list, label: str, data: pd.DataFrame):
     X = data[features].values
-    y = data[label] 
+    y = data[label]
+    return X, y
+
+def loo_cv(X, y, model=LogisticRegression(C=1000000), is_classifier=True):
     cv = LeaveOneOut()
     y_true, y_pred = list(), list()
     for train_ix, test_ix in cv.split(X):
@@ -96,52 +98,16 @@ def looEval(features: list, label: str, data: pd.DataFrame, model=LogisticRegres
         # fit model
         model.fit(X_train, y_train)
         # evaluate model
-        yhat = model.predict_proba(X_test)
-        # store
-        y_true.append(y_test.iloc[0])
-        y_pred.append(yhat[0][1])
+        if is_classifier:
+            yhat = model.predict_proba(X_test)
+            y_pred.append(yhat[0][1])
+        else:
+            yhat = model.predict(X_test)
+            y_pred.append(yhat)
+        y_true.append(y_test)
+        
     # # calculate accuracy
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
-    y_pred - y_true
     return y_true, y_pred
 
-def plotROC(y_true, y_pred, features=None):
-    fpr, tpr, _ = roc_curve(y_true, y_pred.ravel())
-    roc_auc = roc_auc_score(y_true, y_pred)
-    fig, ax = plt.subplots()
-    lw = 2
-    ax.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='AUC = %0.9f' % roc_auc)
-    ax.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    ax.set_xlabel('False Positive Rate')
-    ax.set_ylabel('True Positive Rate')
-    ax.legend(loc="lower right")
-    ax.grid()
-    if features:
-        ax.set_title(f'ROC Curve\nFeature Set: {str(features)}')
-    else:
-        ax.set_title('ROC Curve')
-    return fig
-
-def plotPR(y_true, y_pred, features=None):
-    precision, recall, thresholds = precision_recall_curve(y_true, y_pred)
-    avg_precision = average_precision_score(y_true, y_pred)
-    fig, ax = plt.subplots()
-    lw = 2
-    ax.plot(thresholds, precision[1:], color='darkorange', lw=lw, label='Precision')
-    ax.plot(thresholds, recall[1:], color='navy', lw=lw, label='Recall')
-    ax.grid()
-    ax.legend()
-    ax.set_xlabel('Threshold')
-    ax.set_ylabel('Precision - Recall')
-    if features:
-        ax.set_title(f'Precision - Recall \nAvg Precision = {avg_precision}\nPositive Class Frequency = {np.mean(y_true)}\nFeature Set: {str(features)}')
-    else:
-        ax.set_title(f'Precision - Recall \nAvg Precision = {avg_precision}\nPositive Class Frequency = {np.mean(y_true)}')
-    return fig
-
-def evaluateModel(features: list, label: str, data: pd.DataFrame, model=LogisticRegression(C=1000000)):
-    y_true, y_pred = looEval(features, label, data, model)
-    plotROC(y_true, y_pred, features)
-    plotPR(y_true, y_pred, features)

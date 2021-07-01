@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
+from sklearn.linear_model import LogisticRegression
+
+from trainingtools import loo_cv, values_from_dataframe
 
 
 def error_decomposition(y_true, y_pred_train, y_pred_test, scoring_function, unavoidable_error=0.0):
@@ -18,7 +22,7 @@ def plot_error_decomposition(y_true, y_pred_train, y_pred_test, scoring_function
     error_df = error_decomposition(y_true, y_pred_train, y_pred_test, scoring_function, unavoidable_error=0.0)
     fig, ax = plt.subplots()
     x_values = np.arange(error_df.shape[0])
-    ax.set_xticks(x)
+    ax.set_xticks(x_values)
     ax.set_xticklabels(error_df.index, rotation=45)
     for i in range(error_df.shape[0]):
         value = error_df.iloc[i]['value']
@@ -30,3 +34,44 @@ def plot_error_decomposition(y_true, y_pred_train, y_pred_test, scoring_function
     ax.legend()
     ax.set_title(title)
     return fig
+
+def plot_roc_curve(y_true, y_pred, features=None):
+    fpr, tpr, _ = roc_curve(y_true, y_pred.ravel())
+    roc_auc = roc_auc_score(y_true, y_pred)
+    fig, ax = plt.subplots()
+    lw = 2
+    ax.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='AUC = %0.9f' % roc_auc)
+    ax.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.legend(loc="lower right")
+    ax.grid()
+    if features:
+        ax.set_title(f'ROC Curve\nFeature Set: {str(features)}')
+    else:
+        ax.set_title('ROC Curve')
+    return fig
+
+def plot_pr_curve(y_true, y_pred, features=None):
+    precision, recall, thresholds = precision_recall_curve(y_true, y_pred)
+    avg_precision = average_precision_score(y_true, y_pred)
+    fig, ax = plt.subplots()
+    lw = 2
+    ax.plot(thresholds, precision[1:], color='darkorange', lw=lw, label='Precision')
+    ax.plot(thresholds, recall[1:], color='navy', lw=lw, label='Recall')
+    ax.grid()
+    ax.legend()
+    ax.set_xlabel('Threshold')
+    ax.set_ylabel('Precision - Recall')
+    if features:
+        ax.set_title(f'Precision - Recall \nAvg Precision = {avg_precision}\nPositive Class Frequency = {np.mean(y_true)}\nFeature Set: {str(features)}')
+    else:
+        ax.set_title(f'Precision - Recall \nAvg Precision = {avg_precision}\nPositive Class Frequency = {np.mean(y_true)}')
+    return fig
+
+def evaluate_classifier(features: list, label: str, data: pd.DataFrame, model=LogisticRegression(C=1000000)):
+    X, y = values_from_dataframe(features, label, data)
+    y_true, y_pred = loo_cv(X, y, model=model)
+    plot_roc_curve(y_true, y_pred, features)
+    plot_pr_curve(y_true, y_pred, features)
