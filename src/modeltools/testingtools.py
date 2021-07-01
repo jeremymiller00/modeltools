@@ -467,6 +467,7 @@ class RCTester():
         ]
         return html
 
+
 def calculate_binom_metric(trials: int, successes: int, metric_name: str, cred_int: int = 95) -> plt.figure:
     """    
     Wrapper function for calculating and plotting relevant metrics.
