@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
 from sklearn.linear_model import LogisticRegression
 
-from trainingtools import loo_cv, values_from_dataframe
-
+from .trainingtools import loo_cv, values_from_dataframe
 
 def error_decomposition(y_true, y_pred_train, y_pred_test, scoring_function, unavoidable_error=0.0):
     train_score = scoring_function(y_true, y_pred_train)

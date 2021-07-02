@@ -85,7 +85,7 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
 
 def values_from_dataframe(features: list, label: str, data: pd.DataFrame):
     X = data[features].values
-    y = data[label]
+    y = data[label].values
     return X, y
 
 def loo_cv(X, y, model=LogisticRegression(C=1000000), is_classifier=True):
@@ -104,9 +104,8 @@ def loo_cv(X, y, model=LogisticRegression(C=1000000), is_classifier=True):
         else:
             yhat = model.predict(X_test)
             y_pred.append(yhat)
-        y_true.append(y_test)
+        y_true.append(y_test[0])
         
-    # # calculate accuracy
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
     return y_true, y_pred
