@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="modeltools",
-    version="0.0.1",
+    version="0.1",
     author="Jeremy Miller",
     author_email="jeremymiller00@gmail.com",
     description="Tools to make modeling easier",

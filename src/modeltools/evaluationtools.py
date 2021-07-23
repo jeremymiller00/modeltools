@@ -52,6 +52,22 @@ def plot_roc_curve(y_true, y_pred, features=None):
         ax.set_title('ROC Curve')
     return fig
 
+def plot_prt_curve(y_true, y_pred):
+    precision, recall, thresholds = precision_recall_curve(y_true, y_pred)
+    avg_precision = average_precision_score(y_true, y_pred)
+    fig, ax = plt.subplots()
+    lw = 2
+    ax.plot(recall[::-1], precision[::-1], color='navy', lw=lw)
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel('Recall')
+    ax.set_ylabel('Precision')
+    ax.axhline(y=avg_precision)
+    ax.set_title('Precision - Recall Curve\nAvg Precision: {}'.format(avg_precision))
+    ax.grid()
+    ax.legend()
+    return fig
+
 def plot_pr_curve(y_true, y_pred, features=None):
     precision, recall, thresholds = precision_recall_curve(y_true, y_pred)
     avg_precision = average_precision_score(y_true, y_pred)
