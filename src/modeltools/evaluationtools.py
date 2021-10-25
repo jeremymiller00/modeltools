@@ -65,7 +65,6 @@ def plot_prt_curve(y_true, y_pred):
     ax.axhline(y=avg_precision)
     ax.set_title('Precision - Recall Curve\nAvg Precision: {}'.format(avg_precision))
     ax.grid()
-    ax.legend()
     return fig
 
 def plot_pr_curve(y_true, y_pred, features=None):
