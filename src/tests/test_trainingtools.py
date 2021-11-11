@@ -4,7 +4,8 @@ import statsmodels
 import statsmodels.api as sm
 from sklearn.linear_model import LogisticRegression
 
-from ..modeltools import trainingtools as tt
+from modeltools import trainingtools as tt
+
 
 class TestTrainingTools(unittest.TestCase):
 
@@ -26,11 +27,11 @@ class TestTrainingTools(unittest.TestCase):
 
     def test_fit(self):
         self.linreg.fit(self.X_dummy, self.y_dummy_continuous)
-        self.assertIsInstance(self.linreg.results_, 
-            statsmodels.regression.linear_model.RegressionResultsWrapper)
+        self.assertIsInstance(self.linreg.results_,
+                              statsmodels.regression.linear_model.RegressionResultsWrapper)
         self.logreg.fit(self.X_dummy, self.y_dummy_categorical)
-        self.assertIsInstance(self.logreg.results_, 
-            statsmodels.discrete.discrete_model.BinaryResultsWrapper)
+        self.assertIsInstance(self.logreg.results_,
+                              statsmodels.discrete.discrete_model.BinaryResultsWrapper)
 
     def test_predict(self):
         self.linreg.fit(self.X_dummy, self.y_dummy_continuous)
@@ -48,7 +49,7 @@ class TestTrainingTools(unittest.TestCase):
         self.logreg_thresh.fit(self.X_dummy, self.y_dummy_categorical)
         logreg_predictions = self.logreg_thresh.predict(self.X_dummy_predict)
         for item in logreg_predictions:
-            self.assertIn(item, [0,1], "Threshold Error")
+            self.assertIn(item, [0, 1], "Threshold Error")
 
     def test_loo_cv(self):
         y_true, y_pred = tt.loo_cv(self.X_dummy_2d, self.y_dummy_categorical)
@@ -58,6 +59,7 @@ class TestTrainingTools(unittest.TestCase):
         model.fit(self.X_dummy_2d, self.y_dummy_categorical)
         preds = model.predict_proba(self.X_dummy_2d)
         self.assertNotEqual(y_pred, preds)
+
 
 if __name__ == '__main__':
     unittest.main()

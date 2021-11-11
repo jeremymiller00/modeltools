@@ -12,17 +12,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import LeaveOneOut
 from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
 
+
 class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
     """
     A simple wrapper class to allow Statsmodels linear model to use various functions from sklearn.
     
     """
+
     def __init__(self, fit_intercept=True, threshold=None, is_logit=False):
         self.fit_intercept = fit_intercept
         self.threshold = threshold
         self.is_logit = is_logit
 
-    def fit(self, X, y, column_names=() ):
+    def fit(self, X, y, column_names=()):
         """
         Parameters
         ------------
@@ -32,7 +34,7 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
                 each column of X. This is useful if you use the method
                 summary(), so that it can show the feature name for each
                 coefficient
-        """ 
+        """
         if self.fit_intercept:
             X = sm.add_constant(X)
 
@@ -46,7 +48,7 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
             cols = list(cols)
             X = pd.DataFrame(X)
             cols = column_names.copy()
-            cols.insert(0,'intercept')
+            cols.insert(0, 'intercept')
             print('X ', X)
             X.columns = cols
 
@@ -57,7 +59,7 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
         self.results_ = self.model_.fit()
 
         return self
-      
+
     def predict(self, X):
         # Check is fit had been called
         check_is_fitted(self, 'model_')
@@ -73,20 +75,22 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
 
         return self.results_.predict(X)
 
-    def get_params(self, deep = False):
+    def get_params(self, deep=False):
         return {
-            'fit_intercept':self.fit_intercept,
-            'threshold':self.threshold,
-            'fit_intercept':self.is_logit,
-            }
+            'fit_intercept': self.fit_intercept,
+            'threshold': self.threshold,
+            'is_logit': self.is_logit,
+        }
 
     def summary(self):
         print(self.results_.summary())
+
 
 def values_from_dataframe(features: list, label: str, data: pd.DataFrame):
     X = data[features].values
     y = data[label].values
     return X, y
+
 
 def loo_cv(X, y, model=LogisticRegression(C=1000000), is_classifier=True):
     cv = LeaveOneOut()
@@ -105,8 +109,7 @@ def loo_cv(X, y, model=LogisticRegression(C=1000000), is_classifier=True):
             yhat = model.predict(X_test)
             y_pred.append(yhat)
         y_true.append(y_test[0])
-        
+
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
     return y_true, y_pred
-

@@ -50,21 +50,21 @@ class S3Wrap(object):
         bucket.download_file(path_s3, path_local)
 
 
-# class S3Checkpoint(keras.callbacks.Callback, S3Wrap):
-#     def __init__(self, s3_resource, bucket, path_local, path_s3):
-#         self.bucket = bucket
-#         self.path_local = path_local
-#         self.path_s3 = path_s3
-#         self.last_change = None
-#
-#         S3Wrap.__init__(self, s3_resource)
-#
-#     def on_epoch_end(self, *args):
-#         epoch_nr, logs = args
-#
-#         if os.path.getmtime(self.path_local) != self.last_change:
-#             self.upload(self.bucket, self.path_local, self.path_s3 + str(os.path.getmtime(self.path_local)) + ".h5")
-#             print('uploading checkpoint')
-#             self.last_change = os.path.getmtime(self.path_local)
-#         else:
-#             print("model didn't improve - no upload")
+class S3Checkpoint(keras.callbacks.Callback, S3Wrap):
+    def __init__(self, s3_resource, bucket, path_local, path_s3):
+        self.bucket = bucket
+        self.path_local = path_local
+        self.path_s3 = path_s3
+        self.last_change = None
+
+        S3Wrap.__init__(self, s3_resource)
+
+    def on_epoch_end(self, *args):
+        epoch_nr, logs = args
+
+        if os.path.getmtime(self.path_local) != self.last_change:
+            self.upload(self.bucket, self.path_local, self.path_s3 + str(os.path.getmtime(self.path_local)) + ".h5")
+            print('uploading checkpoint')
+            self.last_change = os.path.getmtime(self.path_local)
+        else:
+            print("model didn't improve - no upload")
