@@ -11,9 +11,9 @@ setuptools.setup(
     description="Tools to make modeling easier",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/...",
+    url="https://github.com/jeremymiller00/modeltools",
     project_urls={
-        "Bug Tracker": "https://github.com/.../issues",
+        "Bug Tracker": "https://github.com/jeremymiller00/modeltools/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
