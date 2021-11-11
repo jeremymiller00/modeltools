@@ -17,6 +17,7 @@ class StatsmodelsWrapper(BaseEstimator, RegressorMixin):
     """
     A simple wrapper class to allow Statsmodels linear model to use various functions from sklearn.
     
+    
     """
 
     def __init__(self, fit_intercept=True, threshold=None, is_logit=False):
