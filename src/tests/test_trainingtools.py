@@ -27,10 +27,10 @@ class TestTrainingTools(unittest.TestCase):
 
     def test_fit(self):
         self.linreg.fit(self.X_dummy, self.y_dummy_continuous)
-        self.assertIsInstance(self.linreg.results_,
+        self.assertIsInstance(self.linreg._fit_model,
                               statsmodels.regression.linear_model.RegressionResultsWrapper)
         self.logreg.fit(self.X_dummy, self.y_dummy_categorical)
-        self.assertIsInstance(self.logreg.results_,
+        self.assertIsInstance(self.logreg._fit_model,
                               statsmodels.discrete.discrete_model.BinaryResultsWrapper)
 
     def test_predict(self):
@@ -41,9 +41,6 @@ class TestTrainingTools(unittest.TestCase):
         self.logreg.fit(self.X_dummy, self.y_dummy_categorical)
         logreg_predictions = self.logreg.predict(self.X_dummy_predict)
         self.assertEqual(len(logreg_predictions), 100)
-        # check that s.split fails when the separator is not a string
-        # with self.assertRaises(TypeError):
-        #     s.split(2)
 
     def test_threshold(self):
         self.logreg_thresh.fit(self.X_dummy, self.y_dummy_categorical)
