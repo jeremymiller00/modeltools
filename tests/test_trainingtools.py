@@ -3,7 +3,6 @@ import numpy as np
 import statsmodels
 import statsmodels.api as sm
 from sklearn.linear_model import LogisticRegression
-
 from modeltools import trainingtools as tt
 
 
